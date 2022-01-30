@@ -5,21 +5,23 @@ import java.io.*;
 
 public class Wordle {
     private static ArrayList<String> totalList;
-    // Get the 5 character string of 0, 1, 2 from our guess and the answer
+    private static int wordLength;
+    private static String successString;
+    // Get the character string of 0, 1, 2 from our guess and the answer
     private static String getFeedback(String guess, String ans) {
         int[] ansCharCounts = new int[26];
         for (int i = 0; i < 26; i++) {
             ansCharCounts[i] = 0;
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < wordLength; i++) {
             ansCharCounts[ans.charAt(i) - 'a']++;
         }
         int[] guessCharCounts = new int[26];
         for (int i = 0; i < 26; i++) {
             guessCharCounts[i] = 0;
         }
-        String[] result = new String[5];
-        for (int i = 0; i < 5; i++) {
+        String[] result = new String[wordLength];
+        for (int i = 0; i < wordLength; i++) {
             if (ans.charAt(i) == guess.charAt(i)) {
                 result[i] = "2";
                 int index = guess.charAt(i) - 'a';
@@ -28,7 +30,7 @@ public class Wordle {
                 result[i] = "";
             }
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < wordLength; i++) {
             if (result[i].equals("2")) {
                 continue;
             }
@@ -41,7 +43,7 @@ public class Wordle {
             guessCharCounts[index]++;
         }
         String resultString = "";
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < wordLength; i++) {
             resultString += result[i];
         }
         return resultString;
@@ -72,7 +74,7 @@ public class Wordle {
             }
             // System.out.println("(" + counter + ") " + guess + ": " + quality + ", " + likelyFeedback);
 
-            if (likelyFeedback.equals("22222") && buckets.size() == 1) {
+            if (likelyFeedback.equals(successString) && buckets.size() == 1) {
                 return guess;
             }
             // Replace quality if necessary
@@ -99,10 +101,10 @@ public class Wordle {
         }
     }
     private static boolean isValidFeedback(String feedback) {
-        if (feedback.length() != 5) {
+        if (feedback.length() != wordLength) {
             return false;
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < wordLength; i++) {
             if (feedback.charAt(i) != '0' && feedback.charAt(i) != '1' && feedback.charAt(i) != '2') {
                 return false;
             }
@@ -111,15 +113,23 @@ public class Wordle {
     }
     public static void main(String[] args) throws IOException {
         // write your code here
+        wordLength = 11;
         Scanner input = new Scanner(new BufferedReader(new FileReader("Words.txt")));
         Scanner in = new Scanner(System.in);
         ArrayList<String> wordList = new ArrayList<>();
         totalList = new ArrayList<>();
         while (input.hasNextLine()) {
-            String next = input.nextLine();
-            wordList.add(next.toLowerCase());
-            totalList.add(next.toLowerCase());
+            String[] nextArr = input.nextLine().split(",");
+            for (String temp : nextArr) {
+                String next = temp.substring(1,temp.length() - 1);
+                if (next.length() != wordLength) {
+                    continue;
+                }
+                wordList.add(next.toLowerCase());
+                totalList.add(next.toLowerCase());
+            }
         }
+        System.out.println("Number of words: " + wordList.size());
         System.out.println("Instructions: The program will output a guess, and for each letter, type 0 if it's gray, 1 if it's orange, and 2 if it's green");
         System.out.println("Enter 'q' without quotes to quit");
 //        for (int i = 0; i < 1000; i++) {
@@ -147,7 +157,11 @@ public class Wordle {
                 System.out.println("Good game!");
                 break;
             }
-            if (feedback.equals("22222")) {
+            successString = "";
+            for (int i = 0; i < wordLength; i++) {
+                successString += "2";
+            }
+            if (feedback.equals(successString)) {
                 System.out.println("Guessed correctly in " + numGuesses + " tries!");
                 break;
             }
