@@ -3,7 +3,7 @@ package com.company;
 import java.util.*;
 import java.io.*;
 
-public class Main {
+public class Wordle {
     private static ArrayList<String> totalList;
     // Get the 5 character string of 0, 1, 2 from our guess and the answer
     private static String getFeedback(String guess, String ans) {
