@@ -64,6 +64,10 @@ public class Wordle {
                     buckets.put(feedback, 0);
                 }
                 buckets.put(feedback, buckets.get(feedback) + 1);
+                // We can prematurely end computation if we know it's not going to affect computation
+                if (buckets.get(feedback) > bestQuality) {
+                    break;
+                }
             }
             // Set quality to the max value in the hashmap
             for (String str : buckets.keySet()) {
@@ -113,7 +117,7 @@ public class Wordle {
     }
     public static void main(String[] args) throws IOException {
         // write your code here
-        wordLength = 11;
+        wordLength = 10;
         Scanner input = new Scanner(new BufferedReader(new FileReader("Words.txt")));
         Scanner in = new Scanner(System.in);
         ArrayList<String> wordList = new ArrayList<>();
@@ -123,6 +127,16 @@ public class Wordle {
             for (String temp : nextArr) {
                 String next = temp.substring(1,temp.length() - 1);
                 if (next.length() != wordLength) {
+                    continue;
+                }
+                boolean isWord = true;
+                for (int i = 0; i < wordLength; i++) {
+                    if (next.charAt(i) - 'a' < 0 || next.charAt(i) - 'a' >= 26) {
+                        isWord = false;
+                        break;
+                    }
+                }
+                if (!isWord) {
                     continue;
                 }
                 wordList.add(next.toLowerCase());
