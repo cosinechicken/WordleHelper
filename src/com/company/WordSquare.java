@@ -4,7 +4,8 @@ import java.util.*;
 import java.io.*;
 
 public class WordSquare {
-    private static String wordQuery = "branch";
+    private static String wordQuery = "david";
+    private static int solCount = 0;
     private static int wordLength;
     private static ArrayList<String> wordList;
     private static ArrayList<HashMap<String, ArrayList<String>>> mapArr;
@@ -48,14 +49,18 @@ public class WordSquare {
     }
     private static boolean solve_helper(String word, ArrayList<String> prefixes, int index) {
         // System.out.println(prefixes);
+        boolean hasSol = false;
         if (index == wordLength - 2) {
             // base case
             if (mapArr.get(index).get(prefixes.get(index)).size() > 0) {
                 prefixes.set(index, mapArr.get(index).get(prefixes.get(index)).get(0));
+                solCount++;
+                System.out.println("Solution " + solCount + ": ");
                 System.out.println(word);
                 for (String prefix : prefixes) {
                     System.out.println(prefix);
                 }
+                System.out.println();
                 return true;
             }
             return false;
@@ -79,7 +84,7 @@ public class WordSquare {
                 // Try out the prefixes
                 boolean result = solve_helper(word, prefixes, index+1);
                 if (result) {
-                    return true;
+                    hasSol = true;
                 }
             }
             // Revert prefixes
@@ -87,6 +92,6 @@ public class WordSquare {
                 prefixes.set(i, prefixes.get(i).substring(0, index+1));
             }
         }
-        return false;
+        return hasSol;
     }
 }
